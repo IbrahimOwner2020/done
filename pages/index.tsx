@@ -1,7 +1,11 @@
 import type { NextPage } from "next";
 import Head from "next/head";
+import { useAuth } from '../hooks/AuthProvider'
 
 const Home: NextPage = () => {
+    const { user } = useAuth()
+    console.log(user)
+    
 	return (
 		<div>
 			<Head>
