@@ -1,11 +1,41 @@
-import type { NextPage } from "next";
+import type {
+	GetServerSidePropsContext,
+	InferGetServerSidePropsType,
+} from "next";
 import Head from "next/head";
-import { useAuth } from '../hooks/AuthProvider'
+import nookies from "nookies";
+import { adminAuth } from "../firebase/firebaseAdmin";
+import { useAuth } from "../hooks/AuthProvider";
 
-const Home: NextPage = () => {
-    const { user } = useAuth()
-    console.log(user)
-    
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+	try {
+		const cookies = nookies.get(ctx);
+		const token = await adminAuth.verifyIdToken(cookies.token);
+
+		const { uid, email } = token;
+		return {
+			props: {
+				email,
+				uid,
+			},
+		};
+	} catch (error) {
+		return {
+			props: {
+				email: null,
+				uid: null,
+			},
+		};
+	}
+};
+
+const Home = (
+	props: InferGetServerSidePropsType<typeof getServerSideProps>
+) => {
+	console.log(props);
+	const { user } = useAuth();
+	console.log(user);
+
 	return (
 		<div>
 			<Head>
