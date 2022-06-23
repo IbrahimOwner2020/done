@@ -1,21 +1,34 @@
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { GetServerSidePropsContext } from "next";
+import { Formik, Form, Field } from "formik";
 import Link from "next/link";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../../firebase/config";
+import nookies from "nookies";
 import { useRouter } from "next/router";
+import { adminAuth } from "../../firebase/firebaseAdmin";
 
-export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-	return {
-		props: {
-			checkUser: null,
-		},
-	};
-}
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+	const cookies = nookies.get(ctx);
+	return await adminAuth
+		.verifyIdToken(cookies.token)
+		.then(() => {
+			return {
+				redirect: {
+					permanent: false,
+					destination: "/user/dashboard",
+				},
+			};
+		})
+		.catch(() => {
+			return {
+				props: {
+					checkUser: null,
+				},
+			};
+		});
+};
 
-const SignupPage = ({
-	checkUser,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const SignupPage = () => {
 	const route = useRouter();
 
 	return (
@@ -43,7 +56,7 @@ const SignupPage = ({
 							})
 								.then(() => {
 									console.log("Profile name updated");
-									route.push("/dashboard");
+									route.push("/user/dashboard");
 								})
 								.catch((error) => {
 									console.log("Error u[dating user name");

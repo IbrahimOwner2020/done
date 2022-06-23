@@ -6,27 +6,28 @@ import Head from "next/head";
 import nookies from "nookies";
 import { adminAuth } from "../firebase/firebaseAdmin";
 import { useAuth } from "../hooks/AuthProvider";
+import Link from "next/link";
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-	try {
-		const cookies = nookies.get(ctx);
-		const token = await adminAuth.verifyIdToken(cookies.token);
-
-		const { uid, email } = token;
-		return {
-			props: {
-				email,
-				uid,
-			},
-		};
-	} catch (error) {
-		return {
-			props: {
-				email: null,
-				uid: null,
-			},
-		};
-	}
+	const cookies = nookies.get(ctx);
+	return await adminAuth
+		.verifyIdToken(cookies.token)
+		.then(() => {
+			return {
+				redirect: {
+					permanent: false,
+					destination: "/user/dashboard",
+				},
+			};
+		})
+		.catch(() => {
+			return {
+				props: {
+					email: null,
+					uid: null,
+				},
+			};
+		});
 };
 
 const Home = (
@@ -47,9 +48,13 @@ const Home = (
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 
-			<div className="text-4xl text-red-700">
-				The done app has started
-			</div>
+			<div className="text-4xl text-red-700">with no login user</div>
+			<Link href="/auth/signUp" passHref>
+				<a>Sign in</a>
+			</Link>
+			<Link href="/auth/login" passHref>
+				<a>Log in</a>
+			</Link>
 		</div>
 	);
 };

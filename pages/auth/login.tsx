@@ -1,22 +1,35 @@
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
-import { Formik, Field, ErrorMessage, Form } from "formik";
+import { GetServerSidePropsContext } from "next";
+import { Formik, Field, Form } from "formik";
 import { auth } from "../../firebase/config";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { useRouter } from 'next/router'
+import { useRouter } from "next/router";
+import nookies from "nookies";
 import Link from "next/link";
+import { adminAuth } from "../../firebase/firebaseAdmin";
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-	return {
-		props: {
-			user: null,
-		},
-	};
+	const cookies = nookies.get(ctx);
+	return await adminAuth
+		.verifyIdToken(cookies.token)
+		.then(() => {
+			return {
+				redirect: {
+					permanent: false,
+					destination: "/user/dashboard",
+				},
+			};
+		})
+		.catch(() => {
+			return {
+				props: {
+					user: null,
+				},
+			};
+		});
 }
 
-const LoginPage = ({
-	user,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-    const route = useRouter()
+const LoginPage = () => {
+	const route = useRouter();
 
 	return (
 		<div>
@@ -32,9 +45,9 @@ const LoginPage = ({
 						values.password
 					)
 						.then(() => {
-                            console.log("Login successfully")
-                            route.push('/dashboard')
-                        })
+							console.log("Login successfully");
+							route.push("/user/dashboard");
+						})
 						.catch((error) => {
 							console.log("Error loging in");
 							console.log(error);
