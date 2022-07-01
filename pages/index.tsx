@@ -1,7 +1,42 @@
-import type { NextPage } from "next";
+import type {
+	GetServerSidePropsContext,
+	InferGetServerSidePropsType,
+} from "next";
 import Head from "next/head";
+import nookies from "nookies";
+import { adminAuth } from "../firebase/firebaseAdmin";
+import { useAuth } from "../hooks/AuthProvider";
+import Link from "next/link";
 
-const Home: NextPage = () => {
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+	const cookies = nookies.get(ctx);
+	return await adminAuth
+		.verifyIdToken(cookies.token)
+		.then(() => {
+			return {
+				redirect: {
+					permanent: false,
+					destination: "/user/dashboard",
+				},
+			};
+		})
+		.catch(() => {
+			return {
+				props: {
+					email: null,
+					uid: null,
+				},
+			};
+		});
+};
+
+const Home = (
+	props: InferGetServerSidePropsType<typeof getServerSideProps>
+) => {
+	console.log(props);
+	const { user } = useAuth();
+	console.log(user);
+
 	return (
 		<div>
 			<Head>
@@ -13,9 +48,13 @@ const Home: NextPage = () => {
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 
-			<div className="text-4xl text-red-700">
-				The done app has started
-			</div>
+			<div className="text-4xl text-red-700">with no login user</div>
+			<Link href="/auth/signUp" passHref>
+				<a>Sign in</a>
+			</Link>
+			<Link href="/auth/login" passHref>
+				<a>Log in</a>
+			</Link>
 		</div>
 	);
 };
