@@ -9,25 +9,34 @@ import { useAuth } from "../hooks/AuthProvider";
 import Link from "next/link";
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-	const cookies = nookies.get(ctx);
-	return await adminAuth
-		.verifyIdToken(cookies.token)
-		.then(() => {
-			return {
-				redirect: {
-					permanent: false,
-					destination: "/user/dashboard",
-				},
-			};
-		})
-		.catch(() => {
-			return {
-				props: {
-					email: null,
-					uid: null,
-				},
-			};
-		});
+	try {
+		const cookies = nookies.get(ctx);
+		return await adminAuth
+			.verifyIdToken(cookies.token)
+			.then(() => {
+				return {
+					redirect: {
+						permanent: false,
+						destination: "/user/dashboard",
+					},
+				};
+			})
+			.catch(() => {
+				return {
+					props: {
+						email: null,
+						uid: null,
+					},
+				};
+			});
+	} catch (error) {
+		return {
+			props: {
+				email: null,
+				uid: null,
+			},
+		};
+	}
 };
 
 const Home = (
