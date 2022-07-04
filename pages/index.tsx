@@ -58,7 +58,7 @@ const Home = (
 			</Head>
 
 			<div className="text-4xl text-red-700">with no login user</div>
-			<Link href="/auth/signUp" passHref>
+			<Link href="/auth/signup" passHref>
 				<a>Sign in</a>
 			</Link>
 			<Link href="/auth/login" passHref>

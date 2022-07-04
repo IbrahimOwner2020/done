@@ -1,13 +1,23 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest, NextApiResponse } from "next";
 
 type Data = {
-  name: string
-}
+	app: {
+		name: string;
+		description: string;
+		version: number;
+	};
+};
 
 export default function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<Data>
+	req: NextApiRequest,
+	res: NextApiResponse<Data>
 ) {
-  res.status(200).json({ name: 'John Doe' })
+	res.status(200).json({
+		app: {
+			name: "Done.",
+			description:
+				"It is an open source todo web app that will consists of tones of features",
+			version: 1.1,
+		},
+	});
 }

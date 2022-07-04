@@ -1,5 +1,5 @@
 import { GetServerSidePropsContext } from "next";
-import { Formik, Field, Form } from "formik";
+import { Formik, Field, Form, ErrorMessage } from "formik";
 import { auth } from "../../firebase/config";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/router";
@@ -54,7 +54,7 @@ const LoginPage = () => {
 						});
 				}}
 			>
-				<Form className="flex flex-col items-center max-w-xl my-6 space-y-2 mx-auto">
+				<Form className="flex flex-col items-center max-w-xl mx-auto my-6 space-y-2">
 					<Field
 						type="email"
 						name="email"
@@ -69,7 +69,7 @@ const LoginPage = () => {
 					/>
 					<button
 						type="submit"
-						className="bg-blue-500 text-white px-6 py-1 rounded-lg"
+						className="px-6 py-1 text-white bg-blue-500 rounded-lg"
 					>
 						Log in
 					</button>
