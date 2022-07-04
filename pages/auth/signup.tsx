@@ -1,11 +1,12 @@
 import { GetServerSidePropsContext } from "next";
-import { Formik, Form, Field } from "formik";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import Link from "next/link";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../../firebase/config";
 import nookies from "nookies";
 import { useRouter } from "next/router";
 import { adminAuth } from "../../firebase/firebaseAdmin";
+import { signUpSchema } from "../../hooks/validationSchema";
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 	const cookies = nookies.get(ctx);
@@ -34,6 +35,7 @@ const SignupPage = () => {
 	return (
 		<div className="max-w-xl mx-auto my-6">
 			<Formik
+				validationSchema={signUpSchema}
 				initialValues={{
 					name: "",
 					email: "",
@@ -76,18 +78,27 @@ const SignupPage = () => {
 						placeholder="Enter your name"
 						className="border"
 					/>
+					<ErrorMessage name="name">
+						{(error) => <p>{error}</p>}
+					</ErrorMessage>
 					<Field
 						type="email"
 						name="email"
 						placeholder="Enter your email address"
 						className="border"
 					/>
+					<ErrorMessage name="email">
+						{(error) => <p>{error}</p>}
+					</ErrorMessage>
 					<Field
 						type="password"
 						name="password"
 						placeholder="Enter your password"
 						className="border"
 					/>
+					<ErrorMessage name="password">
+						{(error) => <p>{error}</p>}
+					</ErrorMessage>
 					<button type="submit">Sign up</button>
 				</Form>
 			</Formik>

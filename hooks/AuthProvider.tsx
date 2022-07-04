@@ -23,9 +23,12 @@ const AuthProvider = ({ children }: any) => {
 		});
 	}, []);
 
+    // COMMENT
 	// Force refresh the token every after 10 minutes.
 	// Firebase refreshes the token itself after every 1 hour if you are using firestore or realtime database
     // Thus in this project I will use firestore, I wont need refreshing token every 20 minutes
+
+    // CODE
 	// useEffect(() => {
 	// 	const handle = setInterval(async () => {
 	// 		const user = auth.currentUser;
