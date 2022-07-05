@@ -8,7 +8,8 @@ import Link from "next/link";
 import { adminAuth } from "../../firebase/firebaseAdmin";
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-	const cookies = nookies.get(ctx);
+	try {
+        const cookies = nookies.get(ctx);
 	return await adminAuth
 		.verifyIdToken(cookies.token)
 		.then(() => {
@@ -26,6 +27,13 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 				},
 			};
 		});
+    } catch (error) {
+        return {
+            props: {
+                user: null
+            }
+        }
+    }
 }
 
 const LoginPage = () => {

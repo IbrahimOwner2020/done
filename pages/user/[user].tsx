@@ -7,25 +7,34 @@ import nookies from "nookies";
 import { useRouter } from "next/router";
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-	const { params } = ctx;
-	const cookies = nookies.get(ctx);
-	return await adminAuth
-		.verifyIdToken(cookies.token)
-		.then(() => {
-			return {
-				props: {
-					page: params?.user,
-				},
-			};
-		})
-		.catch(() => {
-			return {
-				redirect: {
-					permanent: false,
-					destination: "/",
-				},
-			};
-		});
+	try {
+		const { params } = ctx;
+		const cookies = nookies.get(ctx);
+		return await adminAuth
+			.verifyIdToken(cookies.token)
+			.then(() => {
+				return {
+					props: {
+						page: params?.user,
+					},
+				};
+			})
+			.catch(() => {
+				return {
+					redirect: {
+						permanent: false,
+						destination: "/",
+					},
+				};
+			});
+	} catch (error) {
+		return {
+			redirect: {
+				permanent: false,
+				destination: "/",
+			},
+		};
+	}
 };
 
 const UserPage = ({
