@@ -9,24 +9,32 @@ import { adminAuth } from "../../firebase/firebaseAdmin";
 import { signUpSchema } from "../../hooks/validationSchema";
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-	const cookies = nookies.get(ctx);
-	return await adminAuth
-		.verifyIdToken(cookies.token)
-		.then(() => {
-			return {
-				redirect: {
-					permanent: false,
-					destination: "/user/dashboard",
-				},
-			};
-		})
-		.catch(() => {
-			return {
-				props: {
-					checkUser: null,
-				},
-			};
-		});
+	try {
+		const cookies = nookies.get(ctx);
+		return await adminAuth
+			.verifyIdToken(cookies.token)
+			.then(() => {
+				return {
+					redirect: {
+						permanent: false,
+						destination: "/user/dashboard",
+					},
+				};
+			})
+			.catch(() => {
+				return {
+					props: {
+						checkUser: null,
+					},
+				};
+			});
+	} catch (error) {
+		return {
+			props: {
+				checkUser: null,
+			},
+		};
+	}
 };
 
 const SignupPage = () => {
